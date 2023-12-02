@@ -29,45 +29,23 @@ async function handleUpload() {
      */
     func: (jsonData) => {
       const dataForm = document.forms['checkform'];
+      const fieldMap = {
+        'lastName': 'last_name',
+        'firstName': 'first_name',
+        'midName': 'patronymic',
+        'birthday': 'date',
+        'passportSerial': 'passport_series',
+        'passportNumber': 'passport_number',
+        'passportIssueDate': 'issueDate',
+        'inn': 'inn',
+        'snils': 'snils',
+        'contactPhone': 'mobile_phone',
+        'email': 'email'
+      };
       Object.keys(jsonData).forEach(element => {
-        switch (element){
-          case 'lastName':
-            dataForm['last_name'].value = jsonData[element];
-            break;
-          case 'firstName':
-            dataForm['first_name'].value = jsonData[element];
-            break;
-          case 'midName':
-            dataForm['patronymic'].value = jsonData[element];
-            break;
-          case 'birthday':
-            dataForm['date'].value = jsonData[element];
-            break;
-          case 'passportSerial':
-            dataForm['passport_series'].value = jsonData[element];
-            break;
-          case 'passportNumber':
-            dataForm['passport_number'].value = jsonData[element];
-            break;
-          case 'passportIssueDate':
-            dataForm['issueDate'].value = jsonData[element];
-            break;
-          case 'inn':
-            dataForm['inn'].value = jsonData[element];
-            break;
-          case 'snils':
-            dataForm['snils'].value = jsonData[element];
-            break;
-          case 'contactPhone':
-            dataForm['mobile_phone'].value = jsonData[element];
-            break;
-          case 'email':
-            dataForm['email'].value = jsonData[element];
-            break;
-          default:
-            break;
+        if (fieldMap[element]) {
+          dataForm[fieldMap[element]].value = jsonData[element];
         }
-        //document.getElementById('submitbutton').click()
       });
     },
     args: [jsonData],
