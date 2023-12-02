@@ -1,5 +1,12 @@
+"use strict";
+
 document.getElementById('uploadForm').addEventListener('change', handleUpload);
 
+/**
+ * Handles the upload of a file.
+ *
+ * @return {Promise<void>} A promise that resolves when the upload is complete.
+ */
 async function handleUpload() {
   const file = document.getElementById('upload').files[0];
   const reader = new FileReader();
@@ -15,6 +22,11 @@ async function handleUpload() {
   
   await chrome.scripting.executeScript({
     target: {tabId: tab.id},
+    /**
+     * Updates the values of form fields based on the provided JSON data.
+     *
+     * @param {object} jsonData - The JSON data containing the values to be updated.
+     */
     func: (jsonData) => {
       const dataForm = document.forms['checkform'];
       Object.keys(jsonData).forEach(element => {
