@@ -1,14 +1,14 @@
 "use strict";
 
 document.getElementById('uploadForm').addEventListener('change', handleUpload);
-const checkBox = document.forms['checkBox']['checkbox'];
-
 /**
  * Handles the upload of a file.
  *
  * @return {Promise<void>} A promise that resolves when the upload is complete.
  */
 async function handleUpload() {
+  const checkBox = document.getElementById('checkbox').checked;
+  console.log(checkBox);
   const file = document.getElementById('upload').files[0];
   const reader = new FileReader();
   reader.readAsText(file);
@@ -24,11 +24,12 @@ async function handleUpload() {
   await chrome.scripting.executeScript({
     target: {tabId: tab.id},
     /**
-     * Updates the values of form fields based on the provided JSON data.
+     * Generates a comment for the given function body.
      *
-     * @param {object} jsonData - The JSON data containing the values to be updated.
+     * @param {Object} jsonData - The JSON data to process.
+     * @param {boolean} checkBox - Whether to submit the form or not.
      */
-    func: (jsonData) => {
+    func: (jsonData, checkBox) => {
       const dataForm = document.forms['checkform'];
       if (!dataForm) {
         return;
@@ -48,7 +49,11 @@ async function handleUpload() {
       };
       Object.keys(jsonData).forEach(element => {
         if (fieldMap[element]) {
-          dataForm[fieldMap[element]].value = jsonData[element];
+          if (['date','issueDate'].includes(fieldMap[element])) {
+            dataForm[fieldMap[element]].value = new Date(jsonData[element]).toLocaleDateString('ru-RU');
+          } else {
+            dataForm[fieldMap[element]].value = jsonData[element];
+          }
         }
       });
       // Submit the form
@@ -56,6 +61,6 @@ async function handleUpload() {
         dataForm.submit();
       }
     },
-    args: [jsonData],
+    args: [jsonData, checkBox],
   });
 }

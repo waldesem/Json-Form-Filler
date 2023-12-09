@@ -4,9 +4,12 @@
     <meta charset="utf-8">
     <title>Json Form Filler</title>
     <style>
+      body {
+        font-family: Arial, sans-serif;
+        width: 200px;
+      }
       div {
         margin: 20px;
-        width: 100px;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -21,14 +24,21 @@
         justify-content: center;
         align-items: center;
       }
-      #uploadLabel {
-        font-weight: bold;
+      label {
         cursor: pointer;
-        color: #1E90FF;
-        text-decoration: underline;
+        font-size:small;
+        font-weight: bold;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        background-color: #f2f2f2;
       }
       input[type="file"] {
         display: none;
+      }
+      input[type="checkbox"] {
+        margin-left: 10px;
+        transform: scale(1.2);
       }
       footer {
         display: flex;
@@ -43,8 +53,8 @@
       <form id="uploadForm">
         <label id="uploadLabel" for="upload">Загрузить файл</label>
         <input type="file" id="upload" name="upload" accept=".json" />
-        <input type="checkbox" id="checkbox" name="checkbox" value="" 
-               checked title="Автоматическая отправка формы" />
+        <input type="checkbox" id="checkbox" name="checkbox" value="true" 
+               title="Автоматическая отправка формы" checked />
       </form>
     </div>
     <hr>
