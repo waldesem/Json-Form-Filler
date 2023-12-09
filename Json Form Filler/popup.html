@@ -6,21 +6,50 @@
     <style>
       div {
         margin: 20px;
-      }    
+        width: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      h3 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      #uploadLabel {
+        font-weight: bold;
+        cursor: pointer;
+        color: #1E90FF;
+        text-decoration: underline;
+      }
+      input[type="file"] {
+        display: none;
+      }
+      footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
     </style>
   </head>
   <body>
-    <h5>Json Form Filler</h5>
-    <hr>
+    <h3>Json Form Filler</h3>
     <div>
       <form id="uploadForm">
-        <label for="upload" hidden>Загрузить файл</label>
+        <label id="uploadLabel" for="upload">Загрузить файл</label>
         <input type="file" id="upload" name="upload" accept=".json" />
+        <input type="checkbox" id="checkbox" name="checkbox" value="" 
+               checked title="Автоматическая отправка формы" />
       </form>
     </div>
     <hr>
     <footer>
-      <a href="https://github.com/waldesem/Json-Form-Filler">
+      <a href="https://github.com/waldesem/Json-Form-Filler" target="_blank">
         GitHub
       </a>
     </footer>

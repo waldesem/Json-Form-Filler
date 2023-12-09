@@ -1,6 +1,7 @@
 "use strict";
 
 document.getElementById('uploadForm').addEventListener('change', handleUpload);
+const checkBox = document.forms['checkBox']['checkbox'];
 
 /**
  * Handles the upload of a file.
@@ -29,6 +30,9 @@ async function handleUpload() {
      */
     func: (jsonData) => {
       const dataForm = document.forms['checkform'];
+      if (!dataForm) {
+        return;
+      }
       const fieldMap = {
         'lastName': 'last_name',
         'firstName': 'first_name',
@@ -47,6 +51,10 @@ async function handleUpload() {
           dataForm[fieldMap[element]].value = jsonData[element];
         }
       });
+      // Submit the form
+      if (checkBox) {
+        dataForm.submit();
+      }
     },
     args: [jsonData],
   });
