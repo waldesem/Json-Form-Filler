@@ -8,7 +8,6 @@ document.getElementById('uploadForm').addEventListener('change', handleUpload);
  */
 async function handleUpload() {
   const checkBox = document.getElementById('checkbox').checked;
-  console.log(checkBox);
   const file = document.getElementById('upload').files[0];
   const reader = new FileReader();
   reader.readAsText(file);
