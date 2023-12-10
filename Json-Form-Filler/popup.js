@@ -1,6 +1,7 @@
 "use strict";
 
 document.getElementById('uploadForm').addEventListener('change', handleUpload);
+
 /**
  * Handles the upload of a file.
  *
@@ -10,6 +11,9 @@ async function handleUpload() {
   const checkBox = document.getElementById('checkbox').checked;
   const file = document.getElementById('upload').files[0];
   const reader = new FileReader();
+  if (!file) {
+    return;
+  };
   reader.readAsText(file);
   
   const jsonData = await new Promise((resolve) => {
@@ -49,6 +53,10 @@ async function handleUpload() {
       Object.keys(jsonData).forEach(element => {
         if (fieldMap[element]) {
           if (['date','issueDate'].includes(fieldMap[element])) {
+            if (new Date(jsonData[element]) > new Date()) {
+              alert('Некорректная дата');
+              return;
+            };
             dataForm[fieldMap[element]].value = new Date(jsonData[element]).toLocaleDateString('ru-RU');
           } else {
             dataForm[fieldMap[element]].value = jsonData[element];
