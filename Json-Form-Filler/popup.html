@@ -26,18 +26,23 @@
       }
       label {
         cursor: pointer;
-        font-size:small;
+        font-size: small;
         font-weight: bold;
         padding: 10px;
         border: 1px solid #ccc;
         border-radius: 5px;
         background-color: #f2f2f2;
+        display: inline-block;
+        text-align: center;
+        text-decoration: none;
+        color: #000;
+        width: fit-content;
       }
       input[type="file"] {
         display: none;
       }
       input[type="checkbox"] {
-        margin-left: 10px;
+        margin-left: 15px;
         transform: scale(1.2);
       }
       footer {
@@ -52,7 +57,7 @@
     <div>
       <form id="uploadForm">
         <label id="uploadLabel" for="upload">Загрузить файл</label>
-        <input type="file" id="upload" name="upload" accept=".json" />
+        <input type="file" id="upload" name="upload" accept=".json" multiple />
         <input type="checkbox" id="checkbox" name="checkbox" value="true" 
                title="Автоматическая отправка формы" checked />
       </form>
