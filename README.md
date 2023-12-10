@@ -5,11 +5,10 @@ JSON FORM FILLER is a Chrome extension that allows to fill forms with json data 
 
 ### Installation
 
-1. Clone the repository or downloa zip file
-2. Unpack archive file.
-3. In Google Chrome, open the extensions page and activate development mode.
-4. Click on the button for uploading unpackaged extension.
-5. Choose the nested folder with unpackaged extension files.
+1. Download the archive file and unpack it.
+2. In Google Chrome, open the extensions page and activate development mode.
+3. Click on the button for uploading unpackaged extension.
+4. Choose the nested `Json-Form-Filler` folder with unpackaged extension files.
 
 ### Usage
 
