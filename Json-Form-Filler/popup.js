@@ -47,6 +47,7 @@ function handleUpload() {
             yield chrome.scripting.executeScript({
                 target: { tabId: tab.id },
                 func: (jsonData, checkBox) => {
+                    var _a;
                     const dataForm = document.forms['checkform'];
                     if (!dataForm) {
                         return;
@@ -81,8 +82,7 @@ function handleUpload() {
                     });
                     // Submit the form
                     if (checkBox) {
-                        const submitButton = () => dataForm.submit();
-                        setTimeout(submitButton, 500);
+                        (_a = document.getElementById('submitbutton')) === null || _a === void 0 ? void 0 : _a.click();
                         console.log(`Отправка формы для ${jsonData['lastName']} выполнена`);
                     }
                     else {

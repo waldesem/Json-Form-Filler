@@ -79,8 +79,7 @@ async function handleUpload() {
         });
         // Submit the form
         if (checkBox) {
-          const submitButton = () => dataForm.submit();
-          setTimeout(submitButton, 500);
+          document.getElementById('submitbutton')?.click()
           console.log(`Отправка формы для ${jsonData['lastName' as keyof typeof jsonData]} выполнена`);
         } else {
           console.log('Форма заполнена');
