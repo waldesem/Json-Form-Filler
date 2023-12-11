@@ -81,7 +81,8 @@ function handleUpload() {
                     });
                     // Submit the form
                     if (checkBox) {
-                        dataForm.submit();
+                        const submitButton = () => dataForm.submit();
+                        setTimeout(submitButton, 500);
                         console.log(`Отправка формы для ${jsonData['lastName']} выполнена`);
                     }
                     else {
