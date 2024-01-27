@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "StaffSec-WebApp",
+  "name": "Form Filler",
   "version": "0.1.0",
   "host_permissions": [
     "file:///*"
