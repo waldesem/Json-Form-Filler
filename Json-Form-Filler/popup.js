@@ -1,305 +1,169 @@
-"use strict";
-
-const uploadForm = document.getElementById('uploadForm');
-uploadForm.addEventListener('change', handleUpload);
+const uploadForm = document.forms["uploadForm"];
+const fileElement = uploadForm.upload;
+fileElement.addEventListener("change", handleUpload);
 
 async function handleUpload() {
-  const checkBox = document.getElementById('checkbox').checked;
-  const uploadInput = document.getElementById('upload');
-  const filesElement = uploadInput.files;
-  
-  let files= [];
-  if (filesElement) {
-    files = Array.from(filesElement);
-  } else {
-    return;
-  };
+  const checkBox = uploadForm.checkbox.checked;
+  const reader = new FileReader();
+  reader.readAsText(fileElement.files[0]);
 
-  if (!checkBox && files.length > 1) {
+  const jsonData = await new Promise((resolve) => {
+    reader.onload = () => {
+      resolve(JSON.parse(reader.result));
+    };
+  });
 
-    const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-    
-    await chrome.scripting.executeScript({
-      target: {tabId: tab.id},
+  const [tab] = await chrome.tabs.query({
+    active: true,
+    currentWindow: true,
+  });
 
-      func: () => {
-        alert('Отправка нескольких файлов возможна только в автоматическом режиме');
-          return;
-        }
-    });
-    return;
-  };
+  await chrome.scripting.executeScript({
+    target: { tabId: tab.id },
+    func: (jsonData, checkBox) => {
+      const checkform = document.forms["checkform"];
+      const frmInn = document.forms["frmInn"];
+      const nbkiForm = document.forms["nbch302Fz"];
+      const okbForm = document.forms["experian302Fz"];
+      const groupForm = document.forms["groupRequest302fz"];
 
-  files.forEach(async (file) => {
-    const reader = new FileReader();
-    reader.readAsText(file);
-    
-    const jsonData = await new Promise((resolve) => {
-      reader.onload = () => {
-        resolve(JSON.parse(reader.result));
-      };
-    });
-    
-    const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-    
-    await chrome.scripting.executeScript({
-      target: {tabId: tab.id},
-
-      func: (jsonData, checkBox) => {
-        const dataForm = document.forms['checkform'];
-        if (!dataForm) {
-          return;
-        }
-        const fieldMap = {
-          'lastName': 'last_name',
-          'firstName': 'first_name',
-          'midName': 'patronymic',
-          'birthday': 'date',
-          'passportSerial': 'passport_series',
-          'passportNumber': 'passport_number',
-          'passportIssueDate': 'issueDate',
-          'inn': 'inn',
-          'snils': 'snils',
-          'contactPhone': 'mobile_phone',
-          'email': 'email'
-        };
-        Object.keys(jsonData).forEach(element => {
-          if (fieldMap[element]) {
-            if (['date','issueDate'].includes(fieldMap[element])) {
-              if (new Date(jsonData[element]) > new Date()) {
-                alert(`Некорректная дата для ${jsonData['lastName']}`);
-                return;
-              };
-              (dataForm[fieldMap[element]]).value = new Date(jsonData[element]).toLocaleDateString('ru-RU');
-            } else {
-              dataForm[fieldMap[element]].value = jsonData[element];
-            }
-          }
+      // checkform
+      if (checkform) {
+        checkform["last_name"].value = jsonData["lastName"];
+        checkform["first_name"].value = jsonData["firstName"];
+        checkform["patronymic"].value = jsonData["midName"];
+        checkform["date"].value = new Date(
+          jsonData["birthday"]
+        ).toLocaleDateString("ru-RU");
+        checkform["passport_series"].value = jsonData["passportSerial"];
+        checkform["passport_number"].value = jsonData["passportNumber"];
+        checkform["issueDate"].value = new Date(
+          jsonData["passportIssueDate"]
+        ).toLocaleDateString("ru-RU");
+        checkform["inn"].value = jsonData["inn"];
+        checkform["snils"].value = jsonData["snils"];
+        checkform["mobile_phone"].value = jsonData["contactPhone"];
+        checkform["email"].value = jsonData["email"];
+        // uncheck boxes
+        const selectors = [
+          'input[name="sources[gisgmp]"]',
+          'input[name="sources[notariat]"]',
+          'input[name="sources[fotostrana]"]',
+          'input[name="sources[twitter]"]',
+          'input[name="sources[facebook]"]',
+          'input[name="sources[instagram]"]',
+          'input[name="sources[rossvyaz]"]',
+          'input[name="sources[hlr]"]',
+          'input[name="sources[smsc]"]',
+          'input[name="sources[boards]"]',
+          'input[name="sources[microsoft]"]',
+          'input[name="sources[skype]"]',
+          'input[name="sources[google]"]',
+          'input[name="sources[google_name]"]',
+          'input[name="sources[apple]"]',
+          'input[name="sources[truecaller]"]',
+          'input[name="sources[emt]"]',
+          'input[name="sources[callapp]"]',
+          'input[name="sources[simpler]"]',
+          'input[name="sources[eyecon]"]',
+          'input[name="sources[names]"]',
+          'input[name="sources[phones]"]',
+          'input[name="sources[pochta]"]',
+          'input[name="sources[rosneft]"]',
+          'input[name="sources[papajohns]"]',
+        ];
+        selectors.forEach((item) => {
+          checkform.querySelector(item).checked = false;
         });
-        // Submit the form
-        if (checkBox) {
-          document.getElementById('submitbutton')?.click()
-          console.log(`Отправка формы для ${jsonData['lastName']} выполнена`);
-        } else {
-          console.log('Форма заполнена');
-        }
-      },
-      args: [jsonData, checkBox],
-    });
+        // submit form
+        if (checkBox) checkform["submitbutton"].click();
+
+        // frmInn
+      } else if (frmInn) {
+        frmInn["fam"].value = jsonData["lastName"];
+        frmInn["nam"].value = jsonData["firstName"];
+        frmInn["otch"].value = jsonData["midName"];
+        frmInn["bdate"].value = new Date(
+          jsonData["birthday"]
+        ).toLocaleDateString("ru-RU");
+        frmInn["docno"].value = `${jsonData["passportSerial"].slice(
+          0,
+          2
+        )} ${jsonData["passportSerial"].slice(2, 4)} ${
+          jsonData["passportNumber"]
+        }`;
+        // submit form
+        if (checkBox) frmInn["btn_send"].click();
+
+        // nbkiForm
+      } else if (nbkiForm) {
+        nbkiForm["nbch302Fz_requestReason"].value = "24";
+        nbkiForm["surname"].value = jsonData["lastName"];
+        nbkiForm["firstname"].value = jsonData["firstName"];
+        nbkiForm["middlename"].value = jsonData["midName"];
+        nbkiForm["dateOfBirth"].value = new Date(
+          jsonData["birthday"]
+        ).toLocaleDateString("ru-RU");
+        nbkiForm["consentPersonPlaceBirth"].value = jsonData["birthplace"];
+        nbkiForm["idSeries"].value = jsonData["passportSerial"];
+        nbkiForm["idNum"].value = jsonData["passportNumber"];
+        nbkiForm["issueDate"].value = new Date(
+          jsonData["passportIssueDate"]
+        ).toLocaleDateString("ru-RU");
+        nbkiForm["consentPersonIssueAuthority"].value =
+          jsonData["passportIssuedBy"];
+        nbkiForm["consentDate"].value = new Date().toLocaleDateString("ru-RU");
+        // submit form
+        if (checkBox) nbkiForm["nbch302Fz_buttonSend"].click();
+
+        // okbForm
+      } else if (okbForm) {
+        okbForm["experian302Fz_requestReason"].value = "24";
+        okbForm["lastName"].value = jsonData["lastName"];
+        okbForm["firstName"].value = jsonData["firstName"];
+        okbForm["middleName"].value = jsonData["midName"];
+        okbForm["birthDate"].value = new Date(
+          jsonData["birthday"]
+        ).toLocaleDateString("ru-RU");
+        okbForm["birthPlace"].value = jsonData["birthplace"];
+        okbForm["idSeries"].value = jsonData["passportSerial"];
+        okbForm["idNum"].value = jsonData["passportNumber"];
+        okbForm["issueDate"].value = new Date(
+          jsonData["passportIssueDate"]
+        ).toLocaleDateString("ru-RU");
+        okbForm["issueAuthority"].value = jsonData["passportIssuedBy"];
+        okbForm["consentDate"].value = new Date().toLocaleDateString("ru-RU");
+        // submit form
+        if (checkBox) okbForm["experian302Fz_buttonSend"].click();
+
+        // groupForm
+      } else if (groupForm) {
+        groupForm["nbchCheckbox"].checked = true;
+        groupForm["experianCheckbox"].checked = true;
+        groupForm["groupRequest302fz_requestReason"].value = "24";
+        groupForm["surname"].value = jsonData["lastName"];
+        groupForm["firstname"].value = jsonData["firstName"];
+        groupForm["middlename"].value = jsonData["midName"];
+        groupForm["birthDate"].value = new Date(
+          jsonData["birthday"]
+        ).toLocaleDateString("ru-RU");
+        groupForm["birthPlace"].value = jsonData["birthplace"];
+        groupForm["idSeries"].value = jsonData["passportSerial"];
+        groupForm["idNum"].value = jsonData["passportNumber"];
+        groupForm["idIssueDate"].value = new Date(
+          jsonData["idIssueDate"]
+        ).toLocaleDateString("ru-RU");
+        groupForm["idIssueAuthority"].value = jsonData["passportIssuedBy"];
+        groupForm["consentDate"].value = new Date().toLocaleDateString("ru-RU");
+        // submit form
+        if (checkBox) groupForm["groupRequest302fz_buttonSend"].click();
+
+        // form not found
+      } else {
+        alert("Форма не найдена или изменена");
+      }
+    },
+    args: [jsonData, checkBox],
   });
-};
-
-
-async function handleUpload() {
-  const checkBox = document.getElementById('checkbox').checked;
-  const uploadInput = document.getElementById('upload');
-  const filesElement = uploadInput.files;
-  
-  let files= [];
-  if (filesElement) {
-    files = Array.from(filesElement);
-  } else {
-    return;
-  };
-
-  if (!checkBox && files.length > 1) {
-    const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-    await chrome.scripting.executeScript({
-      target: {tabId: tab.id},
-      func: () => {
-        alert('Отправка нескольких файлов возможна только в автоматическом режиме');
-          return;
-        }
-    });
-    return;
-  };
-
-  files.forEach(async (file) => {
-    const reader = new FileReader();
-    reader.readAsText(file);
-    const jsonData = await new Promise((resolve) => {
-      reader.onload = () => {
-        resolve(JSON.parse(reader.result));
-      };
-    });
-    
-    const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
-    
-    await chrome.scripting.executeScript({
-      target: { tabId: tab.id },
-      func: (jsonData, checkBox) => {
-        if (window.location.hostname === "www.i-sphere.ru") {
-            const checkform = document.forms['checkform'];
-            if (!checkform) {
-                alert("Форма отсутствует или изменена");
-                return;
-            }
-            const fieldMap = {
-                'lastName': 'last_name',
-                'firstName': 'first_name',
-                'midName': 'patronymic',
-                'birthday': 'date',
-                'passportSerial': 'passport_series',
-                'passportNumber': 'passport_number',
-                'passportIssueDate': 'issueDate',
-                'inn': 'inn',
-                'snils': 'snils',
-                'contactPhone': 'mobile_phone',
-                'email': 'email'
-            };
-            Object.keys(jsonData).forEach(element => {
-                if (fieldMap[element]) {
-                    if (['date', 'issueDate'].includes(fieldMap[element])) {
-                        if (new Date(jsonData[element]) > new Date()) {
-                            alert(`Некорректная дата для ${jsonData['lastName']}`);
-                            return;
-                        }
-                        ;
-                        checkform[fieldMap[element]].value = new Date(jsonData[element]).toLocaleDateString('ru-RU');
-                    }
-                    else {
-                        checkform[fieldMap[element]].value = jsonData[element];
-                    }
-                }
-            });
-            
-            // Submit the form
-            if (checkBox) {
-                document.getElementById('submitbutton').click()
-                console.log('Отправка формы для выполнена');
-            }
-            else {
-                console.log('Форма заполнена');
-            }
-
-        } else {
-            const NbkiForm = document.forms['nbch302Fz'];
-            const OkbForm = document.forms['experian302Fz'];
-            const GroupForm = document.forms['groupRequest302fz']
-            if (NbkiForm) {
-              const fieldMap = {
-                'lastName': 'surname',
-                'firstName': 'firstname',
-                'midName': 'middlename',
-                'birthday': 'dateOfBirth',
-                'birthplace': 'consentPersonPlaceBirth',
-                'passportSerial': 'idSeries',
-                'passportNumber': 'idNum',
-                'passportIssueDate': 'issueDate',
-                'passportIssuedBy': 'consentPersonIssueAuthority'
-              };
-              Object.keys(jsonData).forEach(element => {
-                if (fieldMap[element]) {
-                  if (['dateOfBirth', 'issueDate'].includes(fieldMap[element])) {
-                    if (new Date(jsonData[element]) > new Date()) {
-                      alert(`Некорректная дата для ${jsonData['lastName']}`);
-                      return;
-                    };
-                    NbkiForm[fieldMap[element]].value = new Date(jsonData[element]).toLocaleDateString('ru-RU');
-                  }
-                  else {
-                    NbkiForm[fieldMap[element]].value = jsonData[element];
-                  }
-                }
-              });
-              let requestReason = document.getElementById("nbch302Fz_requestReason")
-              requestReason.value = '24';
-              NbkiForm["consentDate"].value =  new Date().toLocaleDateString('ru-RU')
-              
-              // Submit the form
-              if (checkBox) {
-                document.getElementById('nbch302Fz_buttonSend').click()
-                console.log('Отправка формы выполнена');
-              }
-              else {
-                  console.log('Форма заполнена');
-              }
-
-            } else if (OkbForm) {
-              const fieldMap = {
-                'lastName': 'lastName',
-                'firstName': 'firstName',
-                'midName': 'middleName',
-                'birthday': 'birthDate',
-                'birthplace': 'birthPlace',
-                'passportSerial': 'idSeries',
-                'passportNumber': 'idNum',
-                'passportIssueDate': 'issueDate',
-                'passportIssuedBy': 'issueAuthority'
-              };
-                
-              Object.keys(jsonData).forEach(element => {
-                if (fieldMap[element]) {
-                  if (['birthDate', 'issueDate'].includes(fieldMap[element])) {
-                    if (new Date(jsonData[element]) > new Date()) {
-                      alert(`Некорректная дата для ${jsonData['lastName']}`);
-                      return;
-                    };
-                    OkbForm[fieldMap[element]].value = new Date(jsonData[element]).toLocaleDateString('ru-RU');
-                  }
-                  else {
-                    OkbForm[fieldMap[element]].value = jsonData[element];
-                  }
-                }
-              });
-              let requestReason = document.getElementById("experian302Fz_requestReason")
-              requestReason.value = '24';
-              OkbForm["consentDate"].value =  new Date().toLocaleDateString('ru-RU')
-              // Submit the form
-              if (checkBox) {
-                document.getElementById('experian302Fz_buttonSend').click()
-                console.log('Отправка формы выполнена');
-              }
-              else {
-                console.log('Форма заполнена');
-              };
-
-            } else if (GroupForm)  {
-              document.getElementById("nbchCheckbox").checked = true
-              document.getElementById("experianCheckbox").checked = true
-              
-              const fieldMap = {
-                'lastName': 'surname',
-                'firstName': 'firstname',
-                'midName': 'middlename',
-                'birthday': 'birthDate',
-                'birthday': 'dateOfBirth',
-                'passportSerial': 'idSeries',
-                'passportNumber': 'idNum',
-                'passportIssueDate': 'idIssueDate',
-                'passportIssuedBy': 'issueAuthority'
-              };
-
-              Object.keys(jsonData).forEach(element => {
-                if (fieldMap[element]) {
-                  if (['birthDate', 'idIssueDate'].includes(fieldMap[element])) {
-                    if (new Date(jsonData[element]) > new Date()) {
-                      alert(`Некорректная дата для ${jsonData['lastName']}`);
-                      return;
-                    };
-                    GroupForm[fieldMap[element]].value = new Date(jsonData[element]).toLocaleDateString('ru-RU');
-                  } else {
-                    GroupForm[fieldMap[element]].value = jsonData[element];
-                  }
-                }
-              });
-              let requestReason = document.getElementById("groupRequest302fz_requestReason")
-              requestReason.value = '24';
-              GroupForm["consentDate"].value =  new Date().toLocaleDateString('ru-RU')
-              // Submit the form
-              if (checkBox) {
-                document.getElementById('groupRequest302fz_buttonSend').click()
-                console.log('Отправка формы выполнена');
-              }
-              else {
-                console.log('Форма заполнена');
-              }
-            } else {
-          alert('Форма не найдена или изменена');
-          }
-        }
-      },
-      args: [jsonData, checkBox],
-    });
-  });
-};
+  window.close()
+}
