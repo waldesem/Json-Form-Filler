@@ -26,6 +26,7 @@ async function handleUpload() {
       const nbkiForm = document.forms["nbch302Fz"];
       const okbForm = document.forms["experian302Fz"];
       const groupForm = document.forms["groupRequest302fz"];
+      const cronosForm = document.forms["cronosv3"];
 
       // checkform
       if (checkform) {
@@ -44,6 +45,7 @@ async function handleUpload() {
         checkform["snils"].value = jsonData["snils"];
         checkform["mobile_phone"].value = jsonData["contactPhone"];
         checkform["email"].value = jsonData["email"];
+
         // uncheck boxes
         const selectors = [
           'input[name="sources[gisgmp]"]',
@@ -61,6 +63,7 @@ async function handleUpload() {
           'input[name="sources[google]"]',
           'input[name="sources[google_name]"]',
           'input[name="sources[apple]"]',
+          'input[name="sources[samsung]"]',
           'input[name="sources[truecaller]"]',
           'input[name="sources[emt]"]',
           'input[name="sources[callapp]"]',
@@ -98,6 +101,7 @@ async function handleUpload() {
         // nbkiForm
       } else if (nbkiForm) {
         nbkiForm["nbch302Fz_requestReason"].value = "24";
+        nbkiForm["consentDate"].value = new Date().toLocaleDateString("ru-RU");
         nbkiForm["surname"].value = jsonData["lastName"];
         nbkiForm["firstname"].value = jsonData["firstName"];
         nbkiForm["middlename"].value = jsonData["midName"];
@@ -112,13 +116,13 @@ async function handleUpload() {
         ).toLocaleDateString("ru-RU");
         nbkiForm["consentPersonIssueAuthority"].value =
           jsonData["passportIssuedBy"];
-        nbkiForm["consentDate"].value = new Date().toLocaleDateString("ru-RU");
         // submit form
         if (checkBox) nbkiForm["nbch302Fz_buttonSend"].click();
 
         // okbForm
       } else if (okbForm) {
         okbForm["experian302Fz_requestReason"].value = "24";
+        okbForm["consentDate"].value = new Date().toLocaleDateString("ru-RU");
         okbForm["lastName"].value = jsonData["lastName"];
         okbForm["firstName"].value = jsonData["firstName"];
         okbForm["middleName"].value = jsonData["midName"];
@@ -132,7 +136,6 @@ async function handleUpload() {
           jsonData["passportIssueDate"]
         ).toLocaleDateString("ru-RU");
         okbForm["issueAuthority"].value = jsonData["passportIssuedBy"];
-        okbForm["consentDate"].value = new Date().toLocaleDateString("ru-RU");
         // submit form
         if (checkBox) okbForm["experian302Fz_buttonSend"].click();
 
@@ -141,6 +144,7 @@ async function handleUpload() {
         groupForm["nbchCheckbox"].checked = true;
         groupForm["experianCheckbox"].checked = true;
         groupForm["groupRequest302fz_requestReason"].value = "24";
+        groupForm["consentDate"].value = new Date().toLocaleDateString("ru-RU");
         groupForm["surname"].value = jsonData["lastName"];
         groupForm["firstname"].value = jsonData["firstName"];
         groupForm["middlename"].value = jsonData["midName"];
@@ -151,19 +155,28 @@ async function handleUpload() {
         groupForm["idSeries"].value = jsonData["passportSerial"];
         groupForm["idNum"].value = jsonData["passportNumber"];
         groupForm["idIssueDate"].value = new Date(
-          jsonData["idIssueDate"]
+          jsonData["passportIssueDate"]
         ).toLocaleDateString("ru-RU");
         groupForm["idIssueAuthority"].value = jsonData["passportIssuedBy"];
-        groupForm["consentDate"].value = new Date().toLocaleDateString("ru-RU");
         // submit form
         if (checkBox) groupForm["groupRequest302fz_buttonSend"].click();
 
-        // form not found
+        // cronos form
+      } else if (cronosForm) {
+        cronosForm["cronosv3_exp"].checked = true;
+        cronosForm["surname"].value = jsonData["lastName"];
+        cronosForm["firstname"].value = jsonData["firstName"];
+        cronosForm["middlename"].value = jsonData["midName"];
+        cronosForm["birthday"].value = new Date(
+          jsonData["birthday"]
+        ).toLocaleDateString("ru-RU");
+        cronosForm["serial"].value = jsonData["passportSerial"];
+        cronosForm["number"].value = jsonData["passportNumber"];
       } else {
         alert("Форма не найдена или изменена");
       }
     },
     args: [jsonData, checkBox],
   });
-  window.close()
+  window.close();
 }
