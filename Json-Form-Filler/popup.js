@@ -173,7 +173,11 @@ async function handleUpload() {
         cronosForm["serial"].value = jsonData["passportSerial"];
         cronosForm["number"].value = jsonData["passportNumber"];
       } else {
-        alert("Форма не найдена или изменена");
+        chrome.notifications.create({
+          type: "basic",
+          title: "Ошибка загрузки",
+          message: "Форма не найдена или изменена",
+        });
       }
     },
     args: [jsonData, checkBox],
